@@ -54,7 +54,7 @@ UserSchema.methods.toJSON = function () {                 //override the method 
 UserSchema.methods.generateAuthToken = function () {      //use reg function and not Array function because arrays don't bins 'this' keyword
   let user = this;
   let access = 'auth';
-  let token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString(); //generates the token
+  let token = jwt.sign({_id: user._id.toHexString(), access}, (process.env.JWT_SECRET || 'secret')).toString(); //generates the token
 
   user.tokens.push({access, token});                      //update users array to push in the {auth: token} object we created above
 
@@ -94,7 +94,7 @@ UserSchema.statics.findByToken = function (token) {
   let decoded;
 
   try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
+    decoded = jwt.verify(token, (process.env.JWT_SECRET || 'secret'));
   } catch (e) {
     return Promise.reject();
   }

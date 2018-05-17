@@ -1,4 +1,4 @@
-require('./config/config');
+// require('./config/config');
 
 //library imports
 const _ = require('lodash');                    //Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
@@ -168,7 +168,7 @@ app.delete('/api/logout', authenticate, (req, res) => {
   });
 });
 
-app.listen(port, () => {
+app.listen(3000, () => {
   console.log(`Started on port ${port}`);
 })
 
