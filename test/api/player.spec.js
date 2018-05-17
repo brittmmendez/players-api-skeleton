@@ -2,6 +2,7 @@ const _ = require('lodash');
 const server = require('../../src/server');
 const { User, Player } = require('../../src/models');
 const data = require('../util/data');
+const expect = require('expect');
 
 let token, user;
 
@@ -135,7 +136,7 @@ describe('Player API', () => {
       expect(res.body.players).to.be.a('array');
       expect(res.body.players.length).to.equal(2);
 
-      res.body.players.forEach(player => expect(player.id).to.be.a('string'));
+      res.body.players.forEach(player => expect(player.id).to.be.a('number'));
     });
 
     it('should not deliver players created by other users', async () => {
@@ -162,7 +163,7 @@ describe('Player API', () => {
       expect(res.body.players).to.be.a('array');
       expect(res.body.players.length).to.equal(1);
 
-      res.body.players.forEach(player => expect(player.id).to.be.a('string'));
+      res.body.players.forEach(player => expect(player.id).to.be.a('number'));
     });
   });
 
