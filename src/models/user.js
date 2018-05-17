@@ -50,4 +50,19 @@ UserSchema.methods.generateAuthToken = function () {      //use reg function and
   });
 };
 
+UserSchema.pre('save', function (next) {
+  let user = this;
+
+  if (user.isModified('password')){
+    bcrypt.genSalt(10, (err, salt) => {                   //create the salt
+      bcrypt.hash(user.password, salt, (err, hash) => {   //call hash with user pw and salt with a cb func
+        user.password = hash;                             //update user document with new password
+        next();                                           //move on to save
+      });
+    });
+  }else {
+    next();
+  }
+});
+
 module.exports = {User}
