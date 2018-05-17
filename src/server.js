@@ -63,4 +63,37 @@ app.delete('/api/logout', authenticate, (req, res) => {
   });
 });
 
+//CREATE PLAYER
+app.post('/api/players', authenticate, (req, res) => {
+
+  if (req.body.handedness !== "left" && req.body.handedness !== "right") {
+    return res.status(400).send('Error: handedness must be right or left');
+  }
+
+  Player.findOne({
+    first_name: req.body.first_name,
+    last_name:req.body.last_name
+  }).then((player) => {
+    if (player) {
+      return res.status(400).send('Error: Player already exists');
+    } else {
+      let newPlayer = new Player({                   //create an instance of mongoose Player model
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        rating: req.body.rating,
+        handedness: req.body.handedness,
+        _creator: req.user._id
+      });
+
+      newPlayer.save().then((doc) =>{                 //save player to db
+        res.send(doc)
+      }, (e) => {
+        res.status(400).send(e);
+      });
+    }
+  })
+});
+
+
+
 module.exports = {app};
