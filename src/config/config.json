@@ -1,0 +1,12 @@
+{
+  "test": {
+    "PORT": 3000,
+    "MONGODB_URI": "mongodb://localhost:27017/PingPongTest",
+    "JWT_SECRET": "sfsdfdfsdfsfsffsfsf"
+  },
+  "development": {
+    "PORT": 3000,
+    "MONGODB_URI": "mongodb://localhost:27017/PingPong",
+    "JWT_SECRET": "srsthhfddfsdf"
+  }
+}
