@@ -36,4 +36,9 @@ app.post('/api/user', (req, res) => {
   })
 });
 
+// GET /users/:id
+app.get('/api/users/:id', authenticate, (req, res) => {   //runs middleware authencate and sends response below if no errors
+  res.send(req.user);                                     //sending the user the request with the info we found/set in findByToken
+});
+
 module.exports = {app};
