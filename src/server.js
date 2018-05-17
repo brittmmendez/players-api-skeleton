@@ -41,4 +41,17 @@ app.get('/api/users/:id', authenticate, (req, res) => {   //runs middleware auth
   res.send(req.user);                                     //sending the user the request with the info we found/set in findByToken
 });
 
+// USER LOGIN
+app.post('/api/login', (req, res) => {
+  let body = _.pick(req.body, ['email', 'password']);
+
+  User.findByCredentials(body.email, body.password).then((user) => {    //call to veryfy if  user exsists with that email. check password
+    user.generateAuthToken().then((token) => {
+      res.header('x-auth', token).send(user);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
+    });
+  }).catch((e) =>{
+    res.status(400).send();
+  });
+});
+
 module.exports = {app};
