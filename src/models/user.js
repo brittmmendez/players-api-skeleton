@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 //stores the schema for a user
 const UserSchema = new mongoose.Schema({
@@ -27,7 +30,17 @@ const UserSchema = new mongoose.Schema({
   },
   passwordConf: {
     type: String,
-  }
+  },
+  tokens: [{
+    access: {
+      type: String,
+      required: true
+    },
+    token: {
+      type: String,
+      required: true
+    }
+  }]
 });
 
 UserSchema.methods.toJSON = function () {                 //override the method generateAuthToken -  this will decide what gets sent back when a mongooose model is converted into a JSON VALUE
@@ -103,5 +116,12 @@ UserSchema.statics.findByCredentials = function (email, password) {
   });
 };
 
-
+UserSchema.methods.removeToken = function (token) {
+  let user = this;
+  return user.update({
+    $pull: {
+      tokens: {token}
+    }
+  });
+};
 module.exports = {User}

@@ -54,4 +54,13 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+//SIGN OUT
+app.delete('/api/logout', authenticate, (req, res) => {
+  req.user.removeToken(req.token).then(() => {
+    res.status(200).send();
+  }, () => {
+    res.status(400).send();
+  });
+});
+
 module.exports = {app};
