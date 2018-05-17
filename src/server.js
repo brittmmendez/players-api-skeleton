@@ -17,5 +17,23 @@ const port = process.env.PORT                   //sets up local port or heroku p
 
 app.use(bodyParser.json());                     //middleware - takes the body data sent from client json and convert it to an object attaching it on to the request object
 
+// CREATE USER
+app.post('/api/user', (req, res) => {
+  let passwordConf =req.body.passwordConf
+  let body = _.pick(req.body, ['first_name', 'last_name', 'email', 'password']);
+
+  if (body.password !== passwordConf) {                //confirm password
+    return res.status(400).send('Error: Password and confirmation password must match');
+  }
+
+  let user = new User(body);
+  user.save().then(() => {
+    return user.generateAuthToken();                       //call the method to geenrate token
+  }).then((token) => {
+    res.header('x-auth', token).send(user);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
+  }).catch((e) => {
+    res.status(400).send(e);
+  })
+});
 
 module.exports = {app};
