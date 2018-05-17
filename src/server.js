@@ -13,7 +13,6 @@ const {User} = require('./models/user');
 const {authenticate} = require('./middleware/authenticate');
 
 const app = express();                          //stores the express application
-const port = process.env.PORT                   //sets up local port or heroku port
 
 app.use(bodyParser.json());                     //middleware - takes the body data sent from client json and convert it to an object attaching it on to the request object
 
@@ -77,7 +76,7 @@ app.post('/api/players', authenticate, (req, res) => {
     if (player) {
       return res.status(400).send('Error: Player already exists');
     } else {
-      let newPlayer = new Player({                   //create an instance of mongoose Player model
+      let newPlayer = new Player({                  //create an instance of mongoose Player model
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         rating: req.body.rating,
@@ -85,7 +84,7 @@ app.post('/api/players', authenticate, (req, res) => {
         _creator: req.user._id
       });
 
-      newPlayer.save().then((doc) =>{                 //save player to db
+      newPlayer.save().then((doc) =>{               //save player to db
         res.send(doc)
       }, (e) => {
         res.status(400).send(e);
@@ -151,15 +150,14 @@ app.delete('/api/players/:id', authenticate, (req, res) => {
 //UPDATE PLAYER
 app.patch('/api/players/:id', authenticate, (req, res) => {
   let id = req.params.id;
-  // let body = _.pick(req.body, ['text', 'completed']);     //needed lodash for this specifically so users can't change things I don't want them to. This checks the body of the request and picks the two items in my array and will only update this
   let body = _.pick(req.body, ['first_name', 'last_name', 'rating', 'handedness']);
-  if (!ObjectID.isValid(id)) {                            //validate id
+  if (!ObjectID.isValid(id)) {                       //validate id
     return res.status(404).send();
   };
 
   Player.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((player) => {  //make our call to find by id and update
     if (!player) {
-      return res.status(404).send();                      //handles the error if ID isn't found
+      return res.status(404).send();                  //handles the error if ID isn't found
     }
 
     res.send({player});
