@@ -26,4 +26,4 @@ const Player = mongoose.model('Player', {
   }
 });
 
-module.exports = {Player};
+module.exports = Player;

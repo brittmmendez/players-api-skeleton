@@ -128,4 +128,4 @@ UserSchema.statics.findByCredentials = function (email, password) {
 
 let User = mongoose.model('User', UserSchema);
 
-module.exports = {User}
+module.exports = User

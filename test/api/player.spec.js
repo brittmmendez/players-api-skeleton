@@ -2,7 +2,7 @@ const _ = require('lodash');
 const server = require('../../src/server');
 const { User, Player } = require('../../src/models');
 const data = require('../util/data');
-const expect = require('expect');
+// const expect = require('expect');
 
 let token, user;
 
