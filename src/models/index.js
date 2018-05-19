@@ -1,9 +1,4 @@
-const Player = require('./player');
 const User = require('./user');
+const Player = require('./player');
 
-module.exports = {
-  Player: {Player},
-  User: {User}
-};
-
-//commment
+module.exports = { User, Player };
