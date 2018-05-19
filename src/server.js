@@ -9,10 +9,9 @@ mongoose.promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/PingPong');
 
 //local imports
-const {Player} = require('./models/player');
-const {User} = require('./models/user');
+const Player = require('./models/player');
+const User = require('./models/user');
 const {authenticate} = require('./middleware/authenticate');
-
 
 const app = express();                          //stores the express application
 
@@ -24,17 +23,23 @@ app.post('/api/user', (req, res) => {
   let body = _.pick(req.body, ['first_name', 'last_name', 'email', 'password']);
 
   if (body.password !== passwordConf) {                //confirm password
-    return res.status(400).send('Error: Password and confirmation password must match');
-  }
-
-  let user = new User(body);
-  user.save().then(() => {
-    return user.generateAuthToken();                       //call the method to geenrate token
-  }).then((token) => {
-    res.header('x-auth', token).send(user);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
-  }).catch((e) => {
-    res.status(400).send(e);
-  })
+    let err = new Error('Passwords do not match.');
+    return res.status(409).send(err.message);
+  } else {
+    let user = new User(body);
+    user.save().then(() => {
+      return user.generateAuthToken();                       //call the method to geenrate token
+    }).then((token) => {
+      let body = {
+      success: true,
+      token: token,
+      user: user
+    };
+      res.header('x-auth', token).send(body);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
+    }).catch((e) => {
+      res.status(409).send(e);
+    })
+  };
 });
 
 // GET /users/:id
@@ -51,7 +56,7 @@ app.post('/api/login', (req, res) => {
       res.header('x-auth', token).send(user);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
     });
   }).catch((e) =>{
-    res.status(400).send();
+    res.status(401).send();
   });
 });
 
@@ -164,4 +169,9 @@ app.patch('/api/players/:id', authenticate, (req, res) => {
   })
 });
 
-module.exports = {app};
+app.listen(3000, () => {
+  console.log("started port");
+})
+
+// module.exports = {app};
+module.exports = app
