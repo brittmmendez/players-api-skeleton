@@ -2,13 +2,17 @@
 const _ = require('lodash');                    //Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
 const express = require('express');             //Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
 const bodyParser = require('body-parser');      //Parse incoming request bodies in a middleware before your handlers
-// const {ObjectID} = require('mongodb');          //Create a new ObjectID instance
+const {ObjectID} = require('mongodb');          //Create a new ObjectID instance
+
 const mongoose = require('mongoose');    //Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
+mongoose.promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/PingPong');
 
 //local imports
 const {Player} = require('./models/player');
 const {User} = require('./models/user');
 const {authenticate} = require('./middleware/authenticate');
+
 
 const app = express();                          //stores the express application
 
@@ -62,10 +66,6 @@ app.delete('/api/logout', authenticate, (req, res) => {
 
 //CREATE PLAYER
 app.post('/api/players', authenticate, (req, res) => {
-
-  if (req.body.handedness !== "left" && req.body.handedness !== "right") {
-    return res.status(400).send('Error: handedness must be right or left');
-  }
 
   Player.findOne({
     first_name: req.body.first_name,

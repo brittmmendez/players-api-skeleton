@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+
+
+mongoose.promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/PingPong');
+
+
 //create a Mongoose model so it knows how to store the data
 //1st arg is the string name, 2nd is an ogject to define properties for a model
 const Player = mongoose.model('Player', {
@@ -18,7 +24,8 @@ const Player = mongoose.model('Player', {
   handedness: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    enum: ['right', 'left']
   },
   _creator: {   //updated model to create association between user and player
     type: mongoose.Schema.Types.ObjectId,

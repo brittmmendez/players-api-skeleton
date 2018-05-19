@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/**/*.spec.js"
+    "test": "mocha test/**/*.spec.js --timeout 50000"
   },
   "author": "Steven White <steven@galchemy.codes>",
   "license": "ISC",
