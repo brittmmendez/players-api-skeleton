@@ -2,7 +2,6 @@ const _ = require('lodash');
 const server = require('../../src/server');
 const { User } = require('../../src/models');
 const data = require('../util/data');
-const expect = require('expect');
 
 describe('User API', () => {
 
@@ -12,13 +11,13 @@ describe('User API', () => {
     });
 
     ['first_name', 'last_name', 'email'].forEach(field => {
-      it(`should fail if ${field} not present`, done => {
+      it(`should fail if ${ field } not present`, done => {
         chai.request(server)
           .post('/api/user')
           .send(_.omit(data.user, field))
           .end(err => {
-            expect(err).toExist;
-            expect(err.status).toEqual(409);
+            expect(err).to.exist;
+            expect(err.status).to.equal(409);
             done();
           });
       });
@@ -30,8 +29,8 @@ describe('User API', () => {
         .post('/api/user')
         .send(user)
         .end(err => {
-          expect(err).toExist;
-          expect(err.status).toEqual(409);
+          expect(err).to.exist;
+          expect(err.status).to.equal(409);
           done();
         });
     });
@@ -43,8 +42,8 @@ describe('User API', () => {
             .post('/api/user')
             .send(data.user)
             .end(err => {
-              expect(err).toExist;
-              expect(err.status).toEqual(409);
+              expect(err).to.exist;
+              expect(err.status).to.equal(409);
               done();
             });
         })
@@ -58,12 +57,12 @@ describe('User API', () => {
         .post('/api/user')
         .send(data.user)
         .end((err, res) => {
-          expect(err).not.toExist;
-          expect(res.status).toEqual(201);
-          expect(res.body.success).toBe(true);
-          expect(res.body.user).toBeA('object');
-          expect(res.body.user.id).toBeA('string');
-          expect(res.body.token).toBeA('string');
+          expect(err).not.to.exist;
+          expect(res.status).to.equal(201);
+          expect(res.body.success).to.be.true;
+          expect(res.body.user).to.be.a('object');
+          expect(res.body.user.id).to.be.a('number');
+          expect(res.body.token).to.be.a('string');
           done();
         });
     });
@@ -82,8 +81,8 @@ describe('User API', () => {
         .post('/api/login')
         .send({ email: 'notfound@email.com', password: data.password })
         .end(err => {
-          expect(err).toExist;
-          expect(err.status).toEqual(401);
+          expect(err).to.exist;
+          expect(err.status).to.equal(401);
           done();
         });
     });
@@ -93,8 +92,8 @@ describe('User API', () => {
         .post('/api/login')
         .send({ email: data.email, password: '__wrong__' })
         .end(err => {
-          expect(err).toExist;
-          expect(err.status).toEqual(401);
+          expect(err).to.exist;
+          expect(err.status).to.equal(401);
           done();
         });
     });
@@ -104,41 +103,12 @@ describe('User API', () => {
         .post('/api/login')
         .send({ email: data.email, password: data.password })
         .end((err, res) => {
-          expect(err).not.toExist;
-          expect(res.status).toEqual(200);
-          expect(res.body.success).toBe(true);
-          expect(res.body.user).toBeA('object');
-          expect(res.body.user.id).toBeA('string');
-          expect(res.body.token).toBeA('string');
-          done();
-        });
-    });
-  });
-
-  describe('PUT /api/user/:userId', () => {
-    let loggedInUser;
-
-    beforeEach(async () => {
-      await User.remove({});
-      loggedInUser = await chai.request(server)
-        .post('/api/user')
-        .send(data.user)
-        .then(res => res.body.user);
-    });
-
-    it('should update the user data', (done) => {
-      const updatedUser = Object.assign({}, data.user, { first_name: 'Elon', last_name: 'Musk' });
-      chai.request(server)
-        .put(`/api/user/${loggedInUser.id}`)
-        .send(updatedUser)
-        .end((err, res) => {
           expect(err).not.to.exist;
-          expect(res.status).toEqual(200);
-          expect(res.body.success).toBe(true);
-          expect(res.body.user).toBeA('object');
-          expect(res.body.user.id).toBeA('string');
-          expect(res.body.user.first_name).toEqual('Elon');
-          expect(res.body.user.last_name).toEqual('Musk');
+          expect(res.status).to.equal(200);
+          expect(res.body.success).to.be.true;
+          expect(res.body.user).to.be.a('object');
+          expect(res.body.user.id).to.be.a('number');
+          expect(res.body.token).to.be.a('string');
           done();
         });
     });

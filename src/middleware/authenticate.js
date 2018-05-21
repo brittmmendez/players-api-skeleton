@@ -3,8 +3,6 @@ const User = require('./../models/user');   //gain access to user model
 let authenticate = (req, res, next) => {
   let getToken = req.headers.authorization    //get auth token
   let token = getToken ? getToken.slice(7) : getToken;              //remove Bearer from string
-  //
-  // console.log(token);
 
   User.findByToken(token).then((user) => {   //call the class method and pass in params of token to find user
     if (!user) {
