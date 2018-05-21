@@ -135,7 +135,9 @@ describe('Player API', () => {
       expect(res.body.players).to.be.a('array');
       expect(res.body.players.length).to.equal(2);
 
-      res.body.players.forEach(player => expect(player.id).to.be.a('number'));
+      res.body.players.forEach(player => expect(player._id).to.be.a('string'));
+      // res.body.players.forEach(player => expect(player._id).to.be.a('number'));
+      //I used MongoDB's default way of generating id's for players like I did for users. The users test wanted the id to be a string.. shoudl this be a string too?
     });
 
     it('should not deliver players created by other users', async () => {
@@ -162,7 +164,7 @@ describe('Player API', () => {
       expect(res.body.players).to.be.a('array');
       expect(res.body.players.length).to.equal(1);
 
-      res.body.players.forEach(player => expect(player.id).to.be.a('number'));
+      res.body.players.forEach(player => expect(player._id).to.be.a('string'));
     });
   });
 
