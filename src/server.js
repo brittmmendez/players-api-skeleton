@@ -77,7 +77,9 @@ app.post('/api/players', authenticate, (req, res) => {
     last_name:req.body.last_name
   }).then((player) => {
     if (player) {
-      return res.status(409).send('Error: Player already exists');
+      let err = new Error('Player Aleady Exists.');
+      res.status(409).send(err);
+      // return res.status(409).send('Error: Player already exists');
     } else {
       let newPlayer = new Player({                  //create an instance of mongoose Player model
         first_name: req.body.first_name,
