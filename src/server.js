@@ -12,10 +12,14 @@ mongoose.connect('mongodb://localhost:27017/PingPong');
 const Player = require('./models/player');
 const User = require('./models/user');
 const {authenticate} = require('./middleware/authenticate');
-const UserController = require('./controllers/UserController');
-
 
 const app = express();                          //stores the express application
+
+const UserController = require('./controllers/user');
+app.use('/api', UserController)
+
+const PlayerController = require('./controllers/player');
+app.use('/api/players', PlayerController)
 
 app.use(bodyParser.json());                     //middleware - takes the body data sent from client json and convert it to an object attaching it on to the request object
 
@@ -102,7 +106,7 @@ app.use(bodyParser.json());                     //middleware - takes the body da
 // //   }, () => {
 // //     res.status(400).send();
 // //   });
-// // });
+// // // });
 
 //CREATE PLAYER
 app.post('/api/players', authenticate, (req, res) => {
