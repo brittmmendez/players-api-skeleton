@@ -219,9 +219,9 @@ app.delete('/api/players/:id', authenticate, (req, res) => {
 //   })
 // });
 
-app.listen(3000, () => {
-  console.log("started port");
-})
+// app.listen(3000, () => {
+//   console.log("started port");
+// })
 
 // module.exports = {app};
 module.exports = app
