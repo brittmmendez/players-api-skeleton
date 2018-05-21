@@ -11,7 +11,7 @@ describe('User API', () => {
     });
 
     ['first_name', 'last_name', 'email'].forEach(field => {
-      it(`should fail if ${ field } not present`, done => {
+      it(`should fail if ${field} not present`, done => {
         chai.request(server)
           .post('/api/user')
           .send(_.omit(data.user, field))
@@ -61,7 +61,7 @@ describe('User API', () => {
           expect(res.status).to.equal(201);
           expect(res.body.success).to.be.true;
           expect(res.body.user).to.be.a('object');
-          expect(res.body.user.id).to.be.a('number');
+          expect(res.body.user.id).to.be.a('string');
           expect(res.body.token).to.be.a('string');
           done();
         });
@@ -107,8 +107,37 @@ describe('User API', () => {
           expect(res.status).to.equal(200);
           expect(res.body.success).to.be.true;
           expect(res.body.user).to.be.a('object');
-          expect(res.body.user.id).to.be.a('number');
+          expect(res.body.user.id).to.be.a('string');
           expect(res.body.token).to.be.a('string');
+          done();
+        });
+    });
+  });
+
+  describe('PUT /api/user/:userId', () => {
+    let loggedInUser;
+
+    beforeEach(async () => {
+      await User.remove({});
+      loggedInUser = await chai.request(server)
+        .post('/api/user')
+        .send(data.user)
+        .then(res => res.body.user);
+    });
+
+    it('should update the user data', (done) => {
+      const updatedUser = Object.assign({}, data.user, { first_name: 'Elon', last_name: 'Musk' });
+      chai.request(server)
+        .put(`/api/user/${loggedInUser.id}`)
+        .send(updatedUser)
+        .end((err, res) => {
+          expect(err).not.to.exist;
+          expect(res.status).to.equal(200);
+          expect(res.body.success).to.be.true;
+          expect(res.body.user).to.be.a('object');
+          expect(res.body.user.id).to.be.a('string');
+          expect(res.body.user.first_name).to.equal('Elon');
+          expect(res.body.user.last_name).to.equal('Musk');
           done();
         });
     });

@@ -33,18 +33,15 @@ app.post('/api/user', (req, res) => {
       let body = {
       success: true,
       token: token,
-      user: user
+      user: {
+        id: user._id
+      }
     };
-      res.header('x-auth', token).send(body);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
+      res.status(201).header('x-auth', token).send(body);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
     }).catch((e) => {
       res.status(409).send(e);
     })
   };
-});
-
-// GET /users/:id
-app.get('/api/users/:id', authenticate, (req, res) => {   //runs middleware authencate and sends response below if no errors
-  res.send(req.user);                                     //sending the user the request with the info we found/set in findByToken
 });
 
 // USER LOGIN
@@ -53,25 +50,60 @@ app.post('/api/login', (req, res) => {
 
   User.findByCredentials(body.email, body.password).then((user) => {    //call to veryfy if  user exsists with that email. check password
     user.generateAuthToken().then((token) => {
-      res.header('x-auth', token).send(user);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
+      let body = {
+      success: true,
+      token: token,
+      user: {
+        id: user._id
+      }
+    };
+      res.status(200).send(body);               //send the token back as an http header. x-auth is a custom header for our specific purpose.
     });
   }).catch((e) =>{
     res.status(401).send();
   });
 });
 
-//SIGN OUT
-app.delete('/api/logout', authenticate, (req, res) => {
-  req.user.removeToken(req.token).then(() => {
-    res.status(201).send();
-  }, () => {
+//UPDATE User
+app.put('/api/user/:userId', (req, res) => {
+  User.findByIdAndUpdate({_id: req.params.userId}, req.body, {new: true})
+  .then((user) => {
+    if (!user) {
+      res.status(500).send();
+    }
+
+    let body = {
+      success: true,
+      user: {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        id: user._id
+      }
+    }
+
+    res.status(200).send(body);
+  }).catch((e) => {
     res.status(400).send();
-  });
+  })
 });
+
+// // GET /users/:id
+// app.get('/api/users/:id', authenticate, (req, res) => {   //runs middleware authencate and sends response below if no errors
+//   res.send(req.user);                                     //sending the user the request with the info we found/set in findByToken
+// });
+
+
+// //SIGN OUT
+// app.delete('/api/logout', authenticate, (req, res) => {
+//   req.user.removeToken(req.token).then(() => {
+//     res.status(201).send({success: true});
+//   }, () => {
+//     res.status(400).send();
+//   });
+// });
 
 //CREATE PLAYER
 app.post('/api/players', authenticate, (req, res) => {
-
   Player.findOne({
     first_name: req.body.first_name,
     last_name:req.body.last_name
@@ -79,18 +111,22 @@ app.post('/api/players', authenticate, (req, res) => {
     if (player) {
       let err = new Error('Player Aleady Exists.');
       res.status(409).send(err);
-      // return res.status(409).send('Error: Player already exists');
     } else {
       let newPlayer = new Player({                  //create an instance of mongoose Player model
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         rating: req.body.rating,
         handedness: req.body.handedness,
-        created_by: req.user._id
+        created_by: req.user._id,
       });
 
-      newPlayer.save().then((doc) =>{               //save player to db
-        res.status(201).send(doc)
+
+      newPlayer.save().then((player) => {
+        let body = {
+        success: true,
+        player: player
+      };
+        res.status(201).send(body)
       }, (e) => {
         res.status(409).send(e);
       });
@@ -100,13 +136,20 @@ app.post('/api/players', authenticate, (req, res) => {
 
 //LIST ALL PLAYERS
 app.get('/api/players', authenticate, (req, res) => {
-  Player.find({
-    created_by: req.user._id                        //only returns player  made by this user
-  }).then((players) =>{
+  Player.find({created_by: req.user._id})                       //only returns player  made by this user
+  .then((players) =>{
     if (players){
-      res.send({players});
+      let body = {
+        success: true,
+        players: players
+    };
+      res.send(body);
     }else {
-        res.send([]);
+      let body = {
+        success: true,
+        player: []
+      };
+        res.send(body);
     }
   }, (e) => {
     res.status(404).send(e);
@@ -122,13 +165,13 @@ app.delete('/api/players/:id', authenticate, (req, res) => {
 
   Player.findOneAndRemove({
     _id: id,
-    _creator: req.user._id                          //only returns player  made by this user
+    created_by: req.user._id                          //only returns player  made by this user
   }).then((player) => {                             //create an instance of mongoose model
     if (!player) {                                 //handles the error if ID isn't found
       return res.status(404).send();
     }
 
-    res.send({player});
+      res.status(200).send();
   }).catch((e) => {
     res.status(404).send();
   });
