@@ -27,9 +27,8 @@ const Player = mongoose.model('Player', {
     trim: true,
     enum: ['right', 'left']
   },
-  _creator: {   //updated model to create association between user and player
+  created_by: {   //updated model to create association between user and player
     type: mongoose.Schema.Types.ObjectId,
-    required: true
   }
 });
 

@@ -1,4 +1,4 @@
-const {User} = require('./../models/user');   //gain access to user model
+const User = require('./../models/user');   //gain access to user model
 
 let authenticate = (req, res, next) => {
   let token = req.header('x-auth');           //get auth token from request header
@@ -12,7 +12,7 @@ let authenticate = (req, res, next) => {
     req.token = token;                       //set the token equal to the token we found
     next();                                  //have to call next to go to next LOC in /users/me
   }).catch((e) => {
-    res.status(401).send();
+    res.status(403).send();
   })
 }
 

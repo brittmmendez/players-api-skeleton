@@ -19,12 +19,12 @@ app.use(bodyParser.json());                     //middleware - takes the body da
 
 // CREATE USER
 app.post('/api/user', (req, res) => {
-  let passwordConf =req.body.passwordConf
+  let confirm_password =req.body.confirm_password
   let body = _.pick(req.body, ['first_name', 'last_name', 'email', 'password']);
 
-  if (body.password !== passwordConf) {                //confirm password
-    let err = new Error('Passwords do not match.');
-    return res.status(409).send(err.message);
+  if (body.password !== confirm_password) {                //confirm password
+     let err = new Error('Passwords do not match.');
+     res.status(409).send(err);
   } else {
     let user = new User(body);
     user.save().then(() => {
@@ -63,7 +63,7 @@ app.post('/api/login', (req, res) => {
 //SIGN OUT
 app.delete('/api/logout', authenticate, (req, res) => {
   req.user.removeToken(req.token).then(() => {
-    res.status(200).send();
+    res.status(201).send();
   }, () => {
     res.status(400).send();
   });
@@ -77,20 +77,20 @@ app.post('/api/players', authenticate, (req, res) => {
     last_name:req.body.last_name
   }).then((player) => {
     if (player) {
-      return res.status(400).send('Error: Player already exists');
+      return res.status(409).send('Error: Player already exists');
     } else {
       let newPlayer = new Player({                  //create an instance of mongoose Player model
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         rating: req.body.rating,
         handedness: req.body.handedness,
-        _creator: req.user._id
+        created_by: req.user._id
       });
 
       newPlayer.save().then((doc) =>{               //save player to db
-        res.send(doc)
+        res.status(201).send(doc)
       }, (e) => {
-        res.status(400).send(e);
+        res.status(409).send(e);
       });
     }
   })
@@ -99,33 +99,15 @@ app.post('/api/players', authenticate, (req, res) => {
 //LIST ALL PLAYERS
 app.get('/api/players', authenticate, (req, res) => {
   Player.find({
-    _creator: req.user._id                        //only returns player  made by this user
+    created_by: req.user._id                        //only returns player  made by this user
   }).then((players) =>{
-    res.send({players});
-  }, (e) => {
-    res.status(400).send(e);
-  });
-});
-
-//SHOW PLAYER
-app.get('/api/players/:id', authenticate, (req, res) => {
-  let id = req.params.id;
-
-  if (!ObjectID.isValid(id)) {                     //validate id
-    return res.status(404).send();
-  };
-
-  Player.findOne({
-    _id: id,
-    _creator: req.user._id                         //only returns player  made by this user
-  }).then((player) => {
-    if (!player) {                                //handles the error if ID isn't found
-      return res.status(404).send();
+    if (players){
+      res.send({players});
+    }else {
+        res.send([]);
     }
-
-    res.send({player});
-  }).catch((e) => {
-    res.status(400).send();
+  }, (e) => {
+    res.status(404).send(e);
   });
 });
 
@@ -141,33 +123,56 @@ app.delete('/api/players/:id', authenticate, (req, res) => {
     _creator: req.user._id                          //only returns player  made by this user
   }).then((player) => {                             //create an instance of mongoose model
     if (!player) {                                 //handles the error if ID isn't found
-      return res.status(400).send();
+      return res.status(404).send();
     }
 
     res.send({player});
   }).catch((e) => {
-    res.status(400).send();
+    res.status(404).send();
   });
 });
 
-//UPDATE PLAYER
-app.patch('/api/players/:id', authenticate, (req, res) => {
-  let id = req.params.id;
-  let body = _.pick(req.body, ['first_name', 'last_name', 'rating', 'handedness']);
-  if (!ObjectID.isValid(id)) {                       //validate id
-    return res.status(404).send();
-  };
+// //SHOW PLAYER
+// app.get('/api/players/:id', authenticate, (req, res) => {
+//   let id = req.params.id;
+//
+//   if (!ObjectID.isValid(id)) {                     //validate id
+//     return res.status(404).send();
+//   };
+//
+//   Player.findOne({
+//     _id: id,
+//     _creator: req.user._id                         //only returns player  made by this user
+//   }).then((player) => {
+//     if (!player) {                                //handles the error if ID isn't found
+//       return res.status(403).send();
+//     }
+//
+//     res.send({player});
+//   }).catch((e) => {
+//     res.status(400).send();
+//   });
+// });
 
-  Player.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((player) => {  //make our call to find by id and update
-    if (!player) {
-      return res.status(404).send();                  //handles the error if ID isn't found
-    }
 
-    res.send({player});
-  }).catch((e) => {
-    res.status(400).send();
-  })
-});
+// //UPDATE PLAYER
+// app.patch('/api/players/:id', authenticate, (req, res) => {
+//   let id = req.params.id;
+//   let body = _.pick(req.body, ['first_name', 'last_name', 'rating', 'handedness']);
+//   if (!ObjectID.isValid(id)) {                       //validate id
+//     return res.status(404).send();
+//   };
+//
+//   Player.findOneAndUpdate({_id: id, _creator: req.user._id}, {$set: body}, {new: true}).then((player) => {  //make our call to find by id and update
+//     if (!player) {
+//       return res.status(404).send();                  //handles the error if ID isn't found
+//     }
+//
+//     res.send({player});
+//   }).catch((e) => {
+//     res.status(400).send();
+//   })
+// });
 
 app.listen(3000, () => {
   console.log("started port");
