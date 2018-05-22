@@ -41,7 +41,6 @@ const UserSchema = new mongoose.Schema({                      //setup the schema
   }]
 });
 
-
 UserSchema.methods.generateAuthToken = function () {               //instance method to add token on for user document use reg function and not Array function because arrays don't bind 'this' keyword
   let user = this;
   let access = 'auth';
@@ -68,15 +67,6 @@ UserSchema.pre('save', function (next) {                           //is called b
     next();
   }
 });
-
-// UserSchema.methods.removeToken = function (token) {            //used for logout route to implement in future
-//   let user = this;
-//   return user.update({
-//     $pull: {
-//       tokens: {token}
-//     }
-//   });
-// };
 
 //model methods:
 UserSchema.statics.findByToken = function (token) {
@@ -115,6 +105,15 @@ UserSchema.statics.findByCredentials = function (email, password) {
     });
   });
 };
+
+// UserSchema.methods.removeToken = function (token) {            //used for logout route to implement in future
+//   let user = this;
+//   return user.update({
+//     $pull: {
+//       tokens: {token}
+//     }
+//   });
+// };
 
 let User = mongoose.model('User', UserSchema);
 
