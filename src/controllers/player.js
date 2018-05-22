@@ -2,7 +2,7 @@ const express = require('express')  //Express is a minimal and flexible Node.js 
 const router = express.Router()
 
 //library imports
-// const _ = require('lodash');                    //Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
+const _ = require('lodash');                    //Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
 const bodyParser = require('body-parser');      //Parse incoming request bodies in a middleware before your handlers
 const {ObjectID} = require('mongodb');          //Create a new ObjectID instance
 
