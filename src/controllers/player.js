@@ -1,19 +1,12 @@
 const express = require('express')                                  //Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
 const router = express.Router()
-
-const _ = require('lodash');                                        //Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
 const bodyParser = require('body-parser');                          //Parse incoming request bodies in a middleware before your handlers
 const {ObjectID} = require('mongodb');                              //Create a new ObjectID instance
 
-const mongoose = require('mongoose');                               //Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
-mongoose.promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/PingPong');
-
 const Player = require('../models/player');
-const User = require('../models/user');
 const {authenticate} = require('../middleware/authenticate');
 
-router.use(bodyParser.json());                                      //middleware - takes the body data sent from client json and convert it to an object attaching it on to the request object
+router.use(bodyParser.json());                                      //middleware - takes the body data sent from client json and converts it to an object attaching it on to the request object
 
 //CREATE PLAYER
 router.post('/', authenticate, (req, res) => {
@@ -32,7 +25,6 @@ router.post('/', authenticate, (req, res) => {
         handedness: req.body.handedness,
         created_by: req.user._id,
       });
-
 
       newPlayer.save().then((player) => {
         let body = {
@@ -76,9 +68,9 @@ router.delete('/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Player.findOneAndRemove({
+  Player.findOneAndRemove({                                          //returns the object and deletes it
     _id: id,
-      created_by: req.user._id                                       //only returns player  made by this user
+    created_by: req.user._id                                         //only returns player made by this user
     }).then((player) => {                                            //create an instance of mongoose model
     if (!player) {                                                   //handles the error if ID isn't found
       return res.status(404).send();

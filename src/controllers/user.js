@@ -4,9 +4,9 @@ const _ = require('lodash');                                           //Lodash 
 const bodyParser = require('body-parser');                             //Parse incoming request bodies in a middleware before your handlers
 const {ObjectID} = require('mongodb');                                 //Create a new ObjectID instance
 
-const mongoose = require('mongoose');                                  //Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
-mongoose.promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/PingPong');
+// const mongoose = require('mongoose');                                  //Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
+// mongoose.promise = global.Promise;
+// mongoose.connect('mongodb://localhost:27017/PingPong');
 
 const Player = require('../models/player');
 const User = require('../models/user');

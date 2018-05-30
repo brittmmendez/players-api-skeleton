@@ -1,8 +1,9 @@
 const express = require('express');                                   //Express -> popular Node.js framework that has a lot of features for web and mobile applications.
 const app = express();                                                //stores the express application
 
-const mongoose = require('mongoose');                                 //Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
-mongoose.connect('mongodb://localhost:27017/PingPong');
+// const mongoose = require('mongoose');                                 //Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
+// mongoose.promise = global.Promise;
+// mongoose.connect('mongodb://localhost:27017/PingPong');
 
 const UserController = require('./controllers/user');                 //Connect to user routes
 app.use('/api', UserController)
