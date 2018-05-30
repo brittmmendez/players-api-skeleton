@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
-const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({                      //setup the schema for a user
@@ -106,6 +105,7 @@ UserSchema.statics.findByCredentials = function (email, password) {
   });
 };
 
+// const _ = require('lodash');
 // UserSchema.methods.removeToken = function (token) {            //used for logout route to implement in future
 //   let user = this;
 //   return user.update({

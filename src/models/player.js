@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-mongoose.promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/PingPong');
-
 const Player = mongoose.model('Player', {                          //create a Mongoose model so to store the data - 1st arg is the string name, 2nd is an ogject to define properties for a model
   first_name: {
     type: String,
