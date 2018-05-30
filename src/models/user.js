@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose');                              // not loading in the file I made, loading in normal mongoose library
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const UserSchema = new mongoose.Schema({                      //setup the schema for a user
+const UserSchema = new mongoose.Schema({                           //setup the schema for a user
   first_name: {
     type: String,
     required: true,

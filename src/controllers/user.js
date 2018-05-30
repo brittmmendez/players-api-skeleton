@@ -1,7 +1,8 @@
 const express = require('express')                                     //Express -> popular Node.js framework that has a lot of features for web and mobile applications.
 const router = express.Router()
 const _ = require('lodash');                                           //Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
-const bodyParser = require('body-parser');                             //Parse incoming request bodies in a middleware before your handlers
+const bodyParser = require('body-parser');                             //Parse incoming requests body in a middleware before your handlers - https://medium.com/@adamzerner/how-bodyparser-works-247897a93b90
+
 const User = require('../models/user');
 
 router.use(bodyParser.json());                                         //middleware - takes the body data sent from client json and convert it to an object attaching it on to the request object

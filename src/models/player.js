@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose');                              // not loading in the file I made, loading in normal mongoose library
 
-const Player = mongoose.model('Player', {                          //create a Mongoose model so to store the data - 1st arg is the string name, 2nd is an ogject to define properties for a model
+const Player = mongoose.model('Player', {                          //create a Mongoose model so mongoose knows how to store our data - .model is a method -1st arg is the string name, 2nd is an ogject to define properties for a model
   first_name: {
     type: String,
-    required: true,
+    required: true,                                               //example of validator
   },
   last_name: {
     type: String,
@@ -16,7 +16,7 @@ const Player = mongoose.model('Player', {                          //create a Mo
   handedness: {
     type: String,
     required: true,
-    trim: true,
+    trim: true,                                                   //trims off leading or trailing white spaces
     enum: ['right', 'left']
   },
   created_by: {                                                   //creates association between user and player

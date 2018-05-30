@@ -1,16 +1,16 @@
 const express = require('express')                                  //Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
 const router = express.Router()
-const bodyParser = require('body-parser');                          //Parse incoming request bodies in a middleware before your handlers
-const {ObjectID} = require('mongodb');                              //Create a new ObjectID instance
+const bodyParser = require('body-parser');                          //Parse incoming requests body in a middleware before your handlers can use req.body - https://medium.com/@adamzerner/how-bodyparser-works-247897a93b90
+const {ObjectID} = require('mongodb');                              //ObjectID from mongodb library - this gives access to ObjectID.isValid
 
 const Player = require('../models/player');
 const {authenticate} = require('../middleware/authenticate');
 
-router.use(bodyParser.json());                                      //middleware - takes the body data sent from client json and converts it to an object attaching it on to the request object
+router.use(bodyParser.json());                                      //middleware - takes the body data sent from client json and converts it to an object attaching it on to the request object as req.body
 
 //CREATE PLAYER
-router.post('/', authenticate, (req, res) => {
-  Player.findOne({
+router.post('/', authenticate, (req, res) => {                       // every express route of gets at least two args - the URL and callback func that gets called with the req and res objects
+  Player.findOne({                                                   //uses mongoose to query and find if there is a player with first and last name in req
     first_name: req.body.first_name,
     last_name:req.body.last_name
   }).then((player) => {
@@ -26,14 +26,14 @@ router.post('/', authenticate, (req, res) => {
         created_by: req.user._id,
       });
 
-      newPlayer.save().then((player) => {
+      newPlayer.save().then((player) => {                           //saves player model to db. f things go well we send player doc back in .then
         let body = {
         success: true,
         player: player
       };
-        res.status(201).send(body)
+        res.status(201).send(body)                                  //callback for success
       }, (e) => {
-        res.status(409).send(e);
+        res.status(409).send(e);                                    //callback for error
       });
     }
   })
@@ -64,15 +64,15 @@ router.get('/', authenticate, (req, res) => {
 //DELETE PLAYER
 router.delete('/:id', authenticate, (req, res) => {
   let id = req.params.id;
-  if (!ObjectID.isValid(id)) {                                        //validate id
-    return res.status(404).send();
+  if (!ObjectID.isValid(id)) {                                       //checks if id is a validate id  --tests still pass without this if statement
+    return res.status(404).send();                                   //returns 404 that the ID isn't valid to handle CastError thats thrown, stops execution and sends empty body
   }
 
   Player.findOneAndRemove({                                          //returns the object and deletes it
-    _id: id,
+    _id: id,                                                         // mongoose takes the id string and converts it to an object id, then runs the query
     created_by: req.user._id                                         //only returns player made by this user
     }).then((player) => {                                            //create an instance of mongoose model
-    if (!player) {                                                   //handles the error if ID isn't found
+    if (!player) {                                                   //handles the error if player isn't found
       return res.status(404).send();
     }
 
