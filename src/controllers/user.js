@@ -18,8 +18,8 @@ router.post('/user', (req, res) => {                                    // every
   } else {
     let user = new User(body);
     user.save().then(() => {
-      return user.generateAuthToken();                                 //call the method to geenrate token
-    }).then((token) => {
+      return user.generateAuthToken();                                 //call the method to geenrate JWT
+    }).then((token) => {                                               //
       let body = {
       success: true,
       token: token,
@@ -27,7 +27,7 @@ router.post('/user', (req, res) => {                                    // every
         id: user._id
       }
     };
-      res.status(201).header('x-auth', token).send(body);              //send the token back as an http header. x-auth is a custom header for our specific purpose.
+      res.status(201).header('x-auth', token).send(body);              //send the token back as an http header. x-auth is a custom header.
     }).catch((e) => {
       res.status(409).send(e);
     })
@@ -38,8 +38,8 @@ router.post('/user', (req, res) => {                                    // every
 router.post('/login', (req, res) => {
   let body = _.pick(req.body, ['email', 'password']);
 
-  User.findByCredentials(body.email, body.password).then((user) => {    //call to veryfy if  user exsists with that email. check password
-    user.generateAuthToken().then((token) => {
+  User.findByCredentials(body.email, body.password).then((user) => {    //call to veryfy if user exsists with that email. then checks password
+    user.generateAuthToken().then((token) => {                          //generate token based off the user returned fro findByCredentials. then once we have the token create body
       let body = {
       success: true,
       token: token,
@@ -49,17 +49,17 @@ router.post('/login', (req, res) => {
     };
       res.status(200).send(body);                                       //send the token back as an http header. x-auth is a custom header for our specific purpose.
     });
-  }).catch((e) =>{
+  }).catch((e) =>{                                                      // if we can't find a user, respond with catch call
     res.status(401).send();
   });
 });
 
 //UPDATE User
 router.put('/user/:userId', (req, res) => {
-  User.findByIdAndUpdate({_id: req.params.userId}, req.body, {new: true})
-  .then((user) => {
+  User.findByIdAndUpdate({_id: req.params.userId}, req.body, {new: true})   //takes 3 args, 1. query based on ID,  values to update, true to return the modified document rather than the original
+  .then((user) => {                                                         //if things go well get the updated user back
     if (!user) {
-      res.status(500).send();
+      res.status(500).send();                                               //if no user send error
     }
 
     let body = {

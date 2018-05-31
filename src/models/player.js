@@ -19,8 +19,8 @@ const Player = mongoose.model('Player', {                          //create a Mo
     trim: true,                                                   //trims off leading or trailing white spaces
     enum: ['right', 'left']
   },
-  created_by: {                                                   //creates association between user and player
-    type: mongoose.Schema.Types.ObjectId,
+  created_by: {                                                   //creates association between user and player so that only his user can access the player
+    type: mongoose.Schema.Types.ObjectId,                         //this is what we need to set the type to in order to store user Id
   }
 });
 
