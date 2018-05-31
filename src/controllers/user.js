@@ -56,7 +56,7 @@ router.post('/login', (req, res) => {
 
 //UPDATE User
 router.put('/user/:userId', (req, res) => {
-  User.findByIdAndUpdate({_id: req.params.userId}, req.body, {new: true})   //takes 3 args, 1. query based on ID,  values to update, true to return the modified document rather than the original
+  User.findByIdAndUpdate({_id: req.params.userId}, req.body, {new: true})   //takes 3 args, 1. query based on ID,  object to update, true to return the modified document rather than the original
   .then((user) => {                                                         //if things go well get the updated user back
     if (!user) {
       res.status(500).send();                                               //if no user send error

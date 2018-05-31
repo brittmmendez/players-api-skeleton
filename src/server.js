@@ -1,4 +1,4 @@
-const express = require('express');                                   //Express -> popular Node.js framework that has a lot of features for web and mobile applications.
+const express = require('express');                                   //Express -> Node.js framework (routing + sugar layer ex. app.get app.post) that has a lot of features for web and mobile applications.
 const app = express();                                                //stores the express application
 
 const {mongoose} = require('./db/mongoose')                           //requiring db file to set up db
