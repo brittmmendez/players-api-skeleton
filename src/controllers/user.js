@@ -8,9 +8,9 @@ const User = require('../models/user');
 router.use(bodyParser.json());                                         //middleware - takes the body data sent from client json and convert it to an object attaching it on to the request object
 
 // CREATE USER
-router.post('/user', (req, res) => {
+router.post('/user', (req, res) => {                                    // every express route of mine gets two args - the URL and callback func that gets called with the req and res objects
   let confirm_password =req.body.confirm_password
-  let body = _.pick(req.body, ['first_name', 'last_name', 'email', 'password']);
+  let body = _.pick(req.body, ['first_name', 'last_name', 'email', 'password']);    //learned how to use picj to pick off the values I wanted instead of setting each equal as I did in players
 
   if (body.password !== confirm_password) {                            //confirm password
      let err = new Error('Passwords do not match.');
